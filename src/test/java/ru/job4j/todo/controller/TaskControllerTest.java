@@ -3,10 +3,9 @@ package ru.job4j.todo.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.SimpleTaskService;
+import ru.job4j.todo.service.SimpleTaskImpl;
 import ru.job4j.todo.service.TaskService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -16,11 +15,11 @@ class TaskControllerTest {
 
     @Test
     void whenGetAllTasksThenSuccess() {
-        Task task1 = new Task(1, "Задача 1", "Описание 1", LocalDateTime.now());
-        Task task2 = new Task(2, "Задача 2", "Описание 2", LocalDateTime.now());
+        Task task1 = new Task(1, "Задача 1", "Описание 1");
+        Task task2 = new Task(2, "Задача 2", "Описание 2");
         List<Task> tasks = List.of(task1, task2);
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskService.class);
+        TaskService taskService = mock(SimpleTaskImpl.class);
         when(taskService.findAll()).thenReturn(tasks);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.getAllTasks(model);
@@ -30,13 +29,13 @@ class TaskControllerTest {
 
     @Test
     void whenGetNewTasksThenSuccess() {
-        Task task1 = new Task(1, "Задача 1", "Описание 1", LocalDateTime.now());
-        Task task2 = new Task(2, "Задача 2", "Описание 2", LocalDateTime.now());
-        Task task3 = new Task(3, "Задача 3", "Описание 3", LocalDateTime.now());
+        Task task1 = new Task(1, "Задача 1", "Описание 1");
+        Task task2 = new Task(2, "Задача 2", "Описание 2");
+        Task task3 = new Task(3, "Задача 3", "Описание 3");
         task1.setDone(true);
         List<Task> newTasks = List.of(task2, task3);
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskService.class);
+        TaskService taskService = mock(SimpleTaskImpl.class);
         when(taskService.findNew()).thenReturn(newTasks);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.getNewTasks(model);
@@ -46,15 +45,15 @@ class TaskControllerTest {
 
     @Test
     void whenGetCompletedTasksThenSuccess() {
-        Task task1 = new Task(1, "Задача 1", "Описание 1", LocalDateTime.now());
-        Task task2 = new Task(2, "Задача 2", "Описание 2", LocalDateTime.now());
-        Task task3 = new Task(3, "Задача 3", "Описание 3", LocalDateTime.now());
+        Task task1 = new Task(1, "Задача 1", "Описание 1");
+        Task task2 = new Task(2, "Задача 2", "Описание 2");
+        Task task3 = new Task(3, "Задача 3", "Описание 3");
         task1.setDone(true);
         task2.setDone(true);
         task3.setDone(true);
         List<Task> completedTasks = List.of(task1, task2, task3);
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskService.class);
+        TaskService taskService = mock(SimpleTaskImpl.class);
         when(taskService.findCompleted()).thenReturn(completedTasks);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.getCompletedTasks(model);
@@ -64,9 +63,9 @@ class TaskControllerTest {
 
     @Test
     void whenAddTaskThenSuccess() {
-        Task task1 = new Task(1, "Задача 1", "Описание 1", LocalDateTime.now());
+        Task task1 = new Task(1, "Задача 1", "Описание 1");
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskService.class);
+        TaskService taskService = mock(SimpleTaskImpl.class);
         TaskController taskController = new TaskController(taskService);
         taskService.add(task1);
         String page = taskController.addTask(model);
@@ -76,35 +75,12 @@ class TaskControllerTest {
 
     @Test
     void whenCreateTaskThenSuccess() {
-        Task task1 = new Task(1, "Задача 1", "Описание 1", LocalDateTime.now());
-        TaskService taskService = mock(SimpleTaskService.class);
+        Task task1 = new Task(1, "Задача 1", "Описание 1");
+        TaskService taskService = mock(SimpleTaskImpl.class);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.createTask(task1);
         verify(taskService).add(task1);
         assertThat(page).isEqualTo("redirect:/formAllTasks");
     }
 
-//    @Test
-//    void whenGetTaskDescriptionThenSuccess() {
-//    }
-//
-//    @Test
-//    void whenCompleteTaskThenSuccess() {
-//    }
-//
-//    @Test
-//    void whenModifyTaskThenSuccess() {
-//    }
-//
-//    @Test
-//    void whenUpdateTaskThenSuccess() {
-//    }
-//
-//    @Test
-//    void whenDeleteTaskThenSuccess() {
-//    }
-//
-//    @Test
-//    void whenDeleteAllTasksThenSuccess() {
-//    }
 }

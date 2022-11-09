@@ -1,6 +1,6 @@
 package ru.job4j.todo.model;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,18 +12,23 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "tasks")
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Data
 public class Task {
 
     /** Идентификатор задачи */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private int id;
 
     /** Название задачи */
+    @NonNull
     private String title;
 
     /** Описание задачи */
+    @NonNull
     private String description;
 
     /** Дата создания задачи */
@@ -32,19 +37,4 @@ public class Task {
     /** Флаг выполнения задачи */
     private boolean done = false;
 
-    /** Дефолтный конструктор */
-    public Task() { }
-
-    /** Конструктор класса инициализирует параметры
-     * @param id идентификатор
-     * @param title название
-     * @param description описание
-     * @param created дата создания
-     */
-    public Task(int id, String title, String description, LocalDateTime created) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.created = created;
-    }
 }

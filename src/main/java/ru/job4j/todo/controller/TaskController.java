@@ -62,7 +62,7 @@ public class TaskController {
      */
     @GetMapping("/formAddTask")
     public String addTask(Model model) {
-        model.addAttribute("task", new Task(0, "Название", "Описание", LocalDateTime.now()));
+        model.addAttribute("task", new Task(0, "Название", "Описание"));
         return "addTask";
     }
 

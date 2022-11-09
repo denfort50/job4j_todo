@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Service
 @AllArgsConstructor
-public class SimpleTaskService implements TaskService {
+public class SimpleTaskImpl implements TaskService {
 
     /** Взаимодействие с хранилищем происходит через слой персистенции TaskRepository */
     private final TaskRepository taskRepository;
