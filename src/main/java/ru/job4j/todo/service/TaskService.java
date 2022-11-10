@@ -21,9 +21,7 @@ public interface TaskService {
 
     List<Task> findAll();
 
-    List<Task> findNew();
-
-    List<Task> findCompleted();
+    List<Task> findTasksByStatus(boolean done);
 
     Task findById(int id);
 

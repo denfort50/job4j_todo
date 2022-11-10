@@ -94,19 +94,11 @@ public class HibernateTaskRepository implements TaskRepository {
         return result;
     }
 
-    public List<Task> findNew() {
+    public List<Task> findTasksByStatus(boolean done) {
         Session session = sf.openSession();
         session.beginTransaction();
-        List<Task> result = session.createQuery("FROM Task t WHERE t.done = false", Task.class).list();
-        session.getTransaction().commit();
-        session.close();
-        return result;
-    }
-
-    public List<Task> findCompleted() {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List<Task> result = session.createQuery("FROM Task t WHERE t.done = true", Task.class).list();
+        List<Task> result = session.createQuery("FROM Task t WHERE t.done = :fDone", Task.class)
+                .setParameter("fDone", done).list();
         session.getTransaction().commit();
         session.close();
         return result;

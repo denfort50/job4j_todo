@@ -3,7 +3,7 @@ package ru.job4j.todo.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.SimpleTaskImpl;
+import ru.job4j.todo.service.TaskServiceImpl;
 import ru.job4j.todo.service.TaskService;
 
 import java.util.List;
@@ -19,7 +19,7 @@ class TaskControllerTest {
         Task task2 = new Task(2, "Задача 2", "Описание 2");
         List<Task> tasks = List.of(task1, task2);
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskImpl.class);
+        TaskService taskService = mock(TaskServiceImpl.class);
         when(taskService.findAll()).thenReturn(tasks);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.getAllTasks(model);
@@ -35,8 +35,8 @@ class TaskControllerTest {
         task1.setDone(true);
         List<Task> newTasks = List.of(task2, task3);
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskImpl.class);
-        when(taskService.findNew()).thenReturn(newTasks);
+        TaskService taskService = mock(TaskServiceImpl.class);
+        when(taskService.findTasksByStatus(false)).thenReturn(newTasks);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.getNewTasks(model);
         verify(model).addAttribute("newTasks", newTasks);
@@ -53,8 +53,8 @@ class TaskControllerTest {
         task3.setDone(true);
         List<Task> completedTasks = List.of(task1, task2, task3);
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskImpl.class);
-        when(taskService.findCompleted()).thenReturn(completedTasks);
+        TaskService taskService = mock(TaskServiceImpl.class);
+        when(taskService.findTasksByStatus(true)).thenReturn(completedTasks);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.getCompletedTasks(model);
         verify(model).addAttribute("completedTasks", completedTasks);
@@ -65,7 +65,7 @@ class TaskControllerTest {
     void whenAddTaskThenSuccess() {
         Task task1 = new Task(1, "Задача 1", "Описание 1");
         Model model = mock(Model.class);
-        TaskService taskService = mock(SimpleTaskImpl.class);
+        TaskService taskService = mock(TaskServiceImpl.class);
         TaskController taskController = new TaskController(taskService);
         taskService.add(task1);
         String page = taskController.addTask(model);
@@ -76,11 +76,11 @@ class TaskControllerTest {
     @Test
     void whenCreateTaskThenSuccess() {
         Task task1 = new Task(1, "Задача 1", "Описание 1");
-        TaskService taskService = mock(SimpleTaskImpl.class);
+        TaskService taskService = mock(TaskServiceImpl.class);
         TaskController taskController = new TaskController(taskService);
         String page = taskController.createTask(task1);
         verify(taskService).add(task1);
-        assertThat(page).isEqualTo("redirect:/formAllTasks");
+        assertThat(page).isEqualTo("redirect:/tasks");
     }
 
 }

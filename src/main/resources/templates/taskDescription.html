@@ -26,10 +26,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link" th:href="@{/formAllTasks}">Все задания</a>
-                <a class="nav-item nav-link" th:href="@{/formNewTasks}">Новые задания</a>
-                <a class="nav-item nav-link" th:href="@{/formCompletedTasks}">Выполненные задания</a>
-                <a class="nav-item nav-link" th:href="@{/formAddTask}">Добавить задание</a>
+                <a class="nav-item nav-link" th:href="@{/tasks}">Все задания</a>
+                <a class="nav-item nav-link" th:href="@{/tasks/undone}">Новые задания</a>
+                <a class="nav-item nav-link" th:href="@{/tasks/done}">Выполненные задания</a>
+                <a class="nav-item nav-link" th:href="@{/tasks/formAddTask}">Добавить задание</a>
             </div>
         </div>
     </nav>
@@ -39,6 +39,7 @@
                 <h4>Задание</h4>
             </div>
             <div class="card-body">
+                <div>ID: <span th:text="${task.id}"></span></div>
                 <div>Название: <span th:text="${task.title}"></span></div>
                 <div>Описание: <span th:text="${task.description}"></span></div>
                 <div>Дата создания: <span th:text="${task.created}"></span></div>
@@ -50,16 +51,40 @@
                         <i class="fa fa-square-o"></i>
                     </span>
                 </div>
-                <form style="text-align: center">
-                    <span th:if="${!task.done}">
-                        <button type="submit" class="btn btn-success" th:formaction="@{|/completeTask/${task.id}|}">Завершить</button>
-                        <button type="submit" class="btn btn-info" th:formaction="@{|/formModifyTask/${task.id}|}">Изменить</button>
-                    </span>
-                        <button type="submit" class="btn btn-warning" th:formaction="@{|/deleteTask/${task.id}|}">Удалить</button>
-                </form>
+                <div class="row">
+                    <div class="card">
+                        <form th:action="@{/tasks/completeTask}" method="POST" th:object="${task}" enctype="multipart/form-data">
+                            <span th:if="${!task.done}">
+                                <input type="hidden" name="id" th:field="*{id}"/>
+                                <input type="hidden" name="title" th:field="*{title}"/>
+                                <input type="hidden" name="description" th:field="*{description}"/>
+                                <input type="hidden" name="created" th:field="*{created}"/>
+                                <button type="submit" class="btn btn-success">Завершить</button>
+                            </span>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <form th:action="@{|/tasks/formModifyTask/${task.id}|}" method="GET" th:object="${task}" enctype="multipart/form-data">
+                            <span th:if="${!task.done}">
+                                <button type="submit" class="btn btn-info">Изменить</button>
+                            </span>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <form th:action="@{/tasks/deleteTask}" method="POST" th:object="${task}" enctype="multipart/form-data">
+                            <input type="hidden" name="id" th:field="*{id}"/>
+                            <input type="hidden" name="title" th:field="*{title}"/>
+                            <input type="hidden" name="description" th:field="*{description}"/>
+                            <input type="hidden" name="created" th:field="*{created}"/>
+                            <button type="submit" class="btn btn-warning">Удалить</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
+
 </div>
 </body>
 </html>

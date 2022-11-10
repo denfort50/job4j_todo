@@ -91,7 +91,7 @@ class HibernateTaskRepositoryTest {
         taskRepository.add(task2);
         taskRepository.add(task3);
         taskRepository.complete(task1.getId());
-        List<Task> tasksInDB = taskRepository.findNew();
+        List<Task> tasksInDB = taskRepository.findTasksByStatus(false);
         assertThat(tasksInDB.stream().map(Task::getId).collect(Collectors.toList()))
                 .containsExactly(task2.getId(), task3.getId());
     }
@@ -106,7 +106,7 @@ class HibernateTaskRepositoryTest {
         taskRepository.add(task3);
         taskRepository.complete(task1.getId());
         taskRepository.complete(task2.getId());
-        List<Task> tasksInDB = taskRepository.findCompleted();
+        List<Task> tasksInDB = taskRepository.findTasksByStatus(true);
         assertThat(tasksInDB.stream().map(Task::getId).collect(Collectors.toList()))
                 .containsExactly(task1.getId(), task2.getId());
     }

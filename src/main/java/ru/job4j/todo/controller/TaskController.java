@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
-import java.time.LocalDateTime;
-
 /**
  * Класс представляет собой контроллер для взаимодействия хранилища задач с представлениями
  * @author Denis Kalchenko
@@ -16,6 +14,7 @@ import java.time.LocalDateTime;
  */
 @Controller
 @AllArgsConstructor
+@RequestMapping("/tasks")
 public class TaskController {
 
     /** Взаимодействие с базой данных происходит через слой сервисов TaskService */
@@ -26,7 +25,7 @@ public class TaskController {
      * @param model модель в представлении
      * @return возвращает представление со списком всех задач
      */
-    @GetMapping("/formAllTasks")
+    @GetMapping("")
     public String getAllTasks(Model model) {
         model.addAttribute("allTasks", taskService.findAll());
         model.addAttribute("tasksAreAbsent", taskService.findAll().isEmpty());
@@ -38,9 +37,9 @@ public class TaskController {
      * @param model модель в представлении
      * @return возвращает представление со списком новых задач
      */
-    @GetMapping("/formNewTasks")
+    @GetMapping("/undone")
     public String getNewTasks(Model model) {
-        model.addAttribute("newTasks", taskService.findNew());
+        model.addAttribute("newTasks", taskService.findTasksByStatus(false));
         return "newTasks";
     }
 
@@ -49,9 +48,9 @@ public class TaskController {
      * @param model модель в представлении
      * @return возвращает представление со списком выполненных задач
      */
-    @GetMapping("/formCompletedTasks")
+    @GetMapping("/done")
     public String getCompletedTasks(Model model) {
-        model.addAttribute("completedTasks", taskService.findCompleted());
+        model.addAttribute("completedTasks", taskService.findTasksByStatus(true));
         return "completedTasks";
     }
 
@@ -74,7 +73,7 @@ public class TaskController {
     @PostMapping("/createTask")
     public String createTask(@ModelAttribute Task task) {
         taskService.add(task);
-        return "redirect:/formAllTasks";
+        return "redirect:/tasks";
     }
 
     /**
@@ -83,21 +82,24 @@ public class TaskController {
      * @param id идентификатор задачи
      * @return возвращает представление с подробной информацией о задаче
      */
-    @GetMapping("/taskDescription/{taskId}")
-    public String getTaskDescription(Model model, @PathVariable("taskId") int id) {
+    @GetMapping("/complete/{id}")
+    public String getCompleteDescription(Model model, @PathVariable("id") int id) {
         model.addAttribute("task", taskService.findById(id));
         return "taskDescription";
     }
 
     /**
-     * Метод обрабатывает GET-запрос на завершение выбранной задачи
-     * @param taskId идентификатор задачи
+     * Метод обрабатывает POST-запрос на завершение выбранной задачи
+     * @param task задача
      * @return возвращает представление со списком всех задач
      */
-    @GetMapping("/completeTask/{taskId}")
-    public String completeTask(@PathVariable("taskId") int taskId) {
-        taskService.complete(taskId);
-        return "redirect:/formAllTasks";
+    @PostMapping("/completeTask")
+    public String completeTask(@ModelAttribute Task task) {
+        boolean result = taskService.complete(task.getId());
+        if (!result) {
+            return "redirect:/tasks/fail";
+        }
+        return "redirect:/tasks";
     }
 
     /**
@@ -106,8 +108,8 @@ public class TaskController {
      * @param id идентификатор задачи
      * @return возвращает представление, в котором можно редактировать задачу
      */
-    @GetMapping("/formModifyTask/{taskId}")
-    public String modifyTask(Model model, @PathVariable("taskId") int id) {
+    @GetMapping("/formModifyTask/{id}")
+    public String modifyTask(Model model, @PathVariable("id") int id) {
         model.addAttribute("task", taskService.findById(id));
         return "modifyTask";
     }
@@ -119,19 +121,26 @@ public class TaskController {
      */
     @PostMapping("/updateTask")
     public String updateTask(@ModelAttribute Task task) {
-        taskService.update(task);
-        return "redirect:/formAllTasks";
+        boolean result = taskService.update(task);
+        if (!result) {
+            return "redirect:/tasks/fail";
+        }
+        return "redirect:/tasks";
     }
 
     /**
-     * Метод обрабатывает GET-запрос на удаление задачи
-     * @param taskId идентификатор задачи
+     * Метод обрабатывает POST-запрос на удаление задачи
+     * @param task задача
      * @return возвращает представление со списком всех задач
      */
-    @GetMapping("/deleteTask/{taskId}")
-    public String deleteTask(@PathVariable("taskId") int taskId) {
-        taskService.delete(taskId);
-        return "redirect:/formAllTasks";
+    @PostMapping("/deleteTask")
+    public String deleteTask(Model model, @ModelAttribute Task task) {
+        boolean result = taskService.delete(task.getId());
+        if (!result) {
+            model.addAttribute("message", "Операцию выполнить не удалось");
+            return "redirect:/tasks/fail";
+        }
+        return "redirect:/tasks";
     }
 
     /**
@@ -141,7 +150,16 @@ public class TaskController {
     @PostMapping("/deleteAllTasks")
     public String deleteAllTasks() {
         taskService.deleteAll();
-        return "redirect:/formAllTasks";
+        return "redirect:/tasks";
+    }
+
+    /**
+     * Метод обрабатывает GET-запрос на получение представления с информацией об ошибке
+     * @return возвращает представление с сообщением об ошибке
+     */
+    @GetMapping("/fail")
+    public String fail() {
+        return "fail";
     }
 
 }

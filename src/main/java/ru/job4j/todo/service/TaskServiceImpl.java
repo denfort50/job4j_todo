@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Service
 @AllArgsConstructor
-public class SimpleTaskImpl implements TaskService {
+public class TaskServiceImpl implements TaskService {
 
     /** Взаимодействие с хранилищем происходит через слой персистенции TaskRepository */
     private final TaskRepository taskRepository;
@@ -39,12 +39,8 @@ public class SimpleTaskImpl implements TaskService {
         return taskRepository.findAll();
     }
 
-    public List<Task> findNew() {
-        return taskRepository.findNew();
-    }
-
-    public List<Task> findCompleted() {
-        return taskRepository.findCompleted();
+    public List<Task> findTasksByStatus(boolean done) {
+        return taskRepository.findTasksByStatus(done);
     }
 
     public Task findById(int id) {
