@@ -6,6 +6,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskServiceImpl;
 import ru.job4j.todo.service.TaskService;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -19,10 +20,11 @@ class TaskControllerTest {
         Task task2 = new Task(2, "Задача 2", "Описание 2");
         List<Task> tasks = List.of(task1, task2);
         Model model = mock(Model.class);
+        HttpSession session = mock(HttpSession.class);
         TaskService taskService = mock(TaskServiceImpl.class);
         when(taskService.findAll()).thenReturn(tasks);
         TaskController taskController = new TaskController(taskService);
-        String page = taskController.getAllTasks(model);
+        String page = taskController.getAllTasks(model, session);
         verify(model).addAttribute("allTasks", tasks);
         assertThat(page).isEqualTo("allTasks");
     }
@@ -35,10 +37,11 @@ class TaskControllerTest {
         task1.setDone(true);
         List<Task> newTasks = List.of(task2, task3);
         Model model = mock(Model.class);
+        HttpSession session = mock(HttpSession.class);
         TaskService taskService = mock(TaskServiceImpl.class);
         when(taskService.findTasksByStatus(false)).thenReturn(newTasks);
         TaskController taskController = new TaskController(taskService);
-        String page = taskController.getNewTasks(model);
+        String page = taskController.getNewTasks(model, session);
         verify(model).addAttribute("newTasks", newTasks);
         assertThat(page).isEqualTo("newTasks");
     }
@@ -53,10 +56,11 @@ class TaskControllerTest {
         task3.setDone(true);
         List<Task> completedTasks = List.of(task1, task2, task3);
         Model model = mock(Model.class);
+        HttpSession session = mock(HttpSession.class);
         TaskService taskService = mock(TaskServiceImpl.class);
         when(taskService.findTasksByStatus(true)).thenReturn(completedTasks);
         TaskController taskController = new TaskController(taskService);
-        String page = taskController.getCompletedTasks(model);
+        String page = taskController.getCompletedTasks(model, session);
         verify(model).addAttribute("completedTasks", completedTasks);
         assertThat(page).isEqualTo("completedTasks");
     }

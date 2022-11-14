@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -14,11 +14,11 @@
             integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <title>ToDo</title>
 </head>
 <body>
-<div class="container">
+<div class="container pt-3">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">ToDo</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,27 +26,30 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link" th:href="@{/tasks}">Все задания</a>
-                <a class="nav-item nav-link" th:href="@{/tasks/undone}">Новые задания</a>
-                <a class="nav-item nav-link" th:href="@{/tasks/done}">Выполненные задания</a>
-                <a class="nav-item nav-link" th:href="@{/tasks/formAddTask}">Добавить задание</a>
-                <a class="nav-item nav-link" th:if="${user.username == 'Гость'}" th:href="@{/users/loginPage}">
-                    <span th:text="${user.username}"></span>
-                    <span> | Войти</span>
-                </a>
-                <a class="nav-item nav-link" th:if="${user.username != 'Гость'}" th:href="@{/users/logout}">
-                    <span th:text="${user.username}"></span>
-                    <span> | Выйти</span>
+                <a class="nav-item nav-link" th:if="${user.username == 'Гость'}" th:href="@{/users/add}">
+                    Зарегистрироваться
                 </a>
             </div>
         </div>
     </nav>
     <div class="row">
         <div class="card" style="width: 100%">
-            <div class="card-body" style="text-align: center">
-                <body>
-                <p>Операцию выполнить не удалось</p>
-                </body>
+            <div class="card-header">
+                Авторизация
+            </div>
+            <div class="card-body">
+                <div th:if="${fail}" class="alert alert-danger" role="alert">
+                    Логин или пароль введены неверно!
+                </div>
+                <form th:action="@{/users/login}" method="POST">
+                    <div class="form-group">
+                        <label>Логин</label>
+                        <input class="form-control" name="login" type="text">
+                        <label>Пароль</label>
+                        <input class="form-control" name="password" type="text">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </form>
             </div>
         </div>
     </div>

@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
+import javax.servlet.http.HttpSession;
+
+import static ru.job4j.todo.util.UserAttributeTool.addAttributeUser;
+
 /**
  * Класс представляет собой контроллер для взаимодействия хранилища задач с представлениями
  * @author Denis Kalchenko
@@ -26,9 +30,10 @@ public class TaskController {
      * @return возвращает представление со списком всех задач
      */
     @GetMapping("")
-    public String getAllTasks(Model model) {
+    public String getAllTasks(Model model, HttpSession session) {
         model.addAttribute("allTasks", taskService.findAll());
         model.addAttribute("tasksAreAbsent", taskService.findAll().isEmpty());
+        addAttributeUser(model, session);
         return "allTasks";
     }
 
@@ -38,8 +43,9 @@ public class TaskController {
      * @return возвращает представление со списком новых задач
      */
     @GetMapping("/undone")
-    public String getNewTasks(Model model) {
+    public String getNewTasks(Model model, HttpSession session) {
         model.addAttribute("newTasks", taskService.findTasksByStatus(false));
+        addAttributeUser(model, session);
         return "newTasks";
     }
 
@@ -49,8 +55,9 @@ public class TaskController {
      * @return возвращает представление со списком выполненных задач
      */
     @GetMapping("/done")
-    public String getCompletedTasks(Model model) {
+    public String getCompletedTasks(Model model, HttpSession session) {
         model.addAttribute("completedTasks", taskService.findTasksByStatus(true));
+        addAttributeUser(model, session);
         return "completedTasks";
     }
 
@@ -83,8 +90,9 @@ public class TaskController {
      * @return возвращает представление с подробной информацией о задаче
      */
     @GetMapping("/complete/{id}")
-    public String getCompleteDescription(Model model, @PathVariable("id") int id) {
+    public String getCompleteDescription(Model model, HttpSession session, @PathVariable("id") int id) {
         model.addAttribute("task", taskService.findById(id));
+        addAttributeUser(model, session);
         return "taskDescription";
     }
 

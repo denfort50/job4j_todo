@@ -30,6 +30,14 @@
                 <a class="nav-item nav-link" th:href="@{/tasks/undone}">Новые задания</a>
                 <a class="nav-item nav-link" th:href="@{/tasks/done}">Выполненные задания</a>
                 <a class="nav-item nav-link" th:href="@{/tasks/formAddTask}">Добавить задание</a>
+                <a class="nav-item nav-link" th:if="${user.username == 'Гость'}" th:href="@{/users/loginPage}">
+                    <span th:text="${user.username}"></span>
+                    <span> | Войти</span>
+                </a>
+                <a class="nav-item nav-link" th:if="${user.username != 'Гость'}" th:href="@{/users/logout}">
+                    <span th:text="${user.username}"></span>
+                    <span> | Выйти</span>
+                </a>
             </div>
         </div>
     </nav>
@@ -82,9 +90,7 @@
                 </div>
             </div>
         </div>
-
     </div>
-
 </div>
 </body>
 </html>

@@ -42,35 +42,9 @@
         </div>
     </nav>
     <div class="row">
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Название</th>
-                <th scope="col">Дата создания</th>
-                <th scope="col">Статус</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="task: ${completedTasks}">
-                <td th:text="${task.id}"></td>
-                <td>
-                        <a th:href="@{|/tasks/complete/${task.id}|}">
-                            <span th:text="${task.title}"></span>
-                        </a>
-                </td>
-                <td th:text="${task.created}"></td>
-                <td>
-                    <span th:if="${task.done}">
-                        <i class="fa fa-check-square-o"></i>
-                    </span>
-                    <span th:if="${!task.done}">
-                        <i class="fa fa-square-o"></i>
-                    </span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <body>
+            <p>Пользователь с указанным логином уже существует</p>
+        </body>
     </div>
 </div>
 </body>
