@@ -35,7 +35,7 @@
 4) Выполнить команду `mvn install`
 5) Перейти в папку targets командой `cd target`
 6) Выполнить команду `java -jar job4j_todo-1.0.jar`
-7) Перейти по ссылке `http://localhost:8081/formAllTasks`
+7) Перейти по ссылке `http://localhost:8081/tasks`
 
 ## Взаимодействие с приложением
 
