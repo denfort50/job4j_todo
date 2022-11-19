@@ -17,5 +17,5 @@ public interface UserService {
 
     Optional<User> findUserById(int userId);
 
-    boolean deleteAll();
+    void deleteAll();
 }

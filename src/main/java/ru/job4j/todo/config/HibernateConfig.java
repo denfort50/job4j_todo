@@ -6,6 +6,8 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.job4j.todo.repository.CrudRepository;
+import ru.job4j.todo.repository.CrudRepositoryImpl;
 
 /**
  * Класс представляет собой конфигурацию ORM Hibernate
@@ -24,5 +26,10 @@ public class HibernateConfig {
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure().build();
         return new MetadataSources(registry).buildMetadata().buildSessionFactory();
+    }
+
+    @Bean
+    public CrudRepository getCrudRepository() {
+        return new CrudRepositoryImpl(getSessionFactory());
     }
 }

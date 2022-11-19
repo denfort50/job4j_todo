@@ -1,25 +1,22 @@
 package ru.job4j.todo.repository;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import ru.job4j.todo.config.TestHibernateConfig;
 import ru.job4j.todo.model.User;
+
+import javax.persistence.NoResultException;
 
 import static org.assertj.core.api.Assertions.*;
 
 class HibernateUserRepositoryTest {
 
-    private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-            .configure().build();
+    private final SessionFactory sessionFactory = new TestHibernateConfig().getSessionFactory();
 
-    private final SessionFactory sessionFactory = new MetadataSources(registry)
-            .buildMetadata()
-            .buildSessionFactory();
+    private final CrudRepository crudRepository = new CrudRepositoryImpl(sessionFactory);
 
-    private final UserRepository userRepository = new HibernateUserRepository(sessionFactory);
+    private final UserRepository userRepository = new HibernateUserRepository(crudRepository);
 
     @AfterEach
     void cleanTable() {
@@ -28,32 +25,35 @@ class HibernateUserRepositoryTest {
 
     @Test
     void whenAddThenSuccess() {
-        User user = new User(1, "Denis", "mr_bond", "password");
-        userRepository.add(user).orElseThrow();
+        User user = new User("Denis", "mr_bond", "password");
+        user = userRepository.add(user).orElseThrow();
         User userInDB = userRepository.findUserById(user.getId()).orElseThrow();
         assertThat(userInDB.getUsername()).isEqualTo(user.getUsername());
     }
 
     @Test
     void whenFindUserByLoginAndPasswordThenSuccess() {
-        User user = new User(1, "Denis", "mr_bond", "password");
-        userRepository.add(user).orElseThrow();
+        User user = new User("Denis", "mr_bond", "password");
+        user = userRepository.add(user).orElseThrow();
         User userInDB = userRepository.findUserByLoginAndPassword(user.getLogin(), user.getPassword()).orElseThrow();
         assertThat(userInDB.getUsername()).isEqualTo(user.getUsername());
     }
 
     @Test
     void whenDeleteAllThenSuccess() {
-        User user1 = new User(1, "Denis", "mr_bond", "password");
-        User user2 = new User(2, "Alex", "mr_crust", "password");
-        User user3 = new User(3, "John", "mr_wick", "password");
-        userRepository.add(user1);
-        userRepository.add(user2);
-        userRepository.add(user3);
+        User user1 = new User("Denis", "mr_bond", "password");
+        User user2 = new User("Alex", "mr_crust", "password");
+        User user3 = new User("John", "mr_wick", "password");
+        int user1Id = userRepository.add(user1).orElseThrow().getId();
+        int user2Id = userRepository.add(user2).orElseThrow().getId();
+        int user3Id = userRepository.add(user3).orElseThrow().getId();
         userRepository.deleteAll();
-        assertThat(userRepository.findUserById(user1.getId())).isEmpty();
-        assertThat(userRepository.findUserById(user2.getId())).isEmpty();
-        assertThat(userRepository.findUserById(user3.getId())).isEmpty();
-
+        assertThatThrownBy(() -> userRepository.findUserById(user1Id))
+                .isInstanceOf(NoResultException.class)
+                .hasMessage("No entity found for query");
+        assertThatThrownBy(() -> userRepository.findUserById(user2Id))
+                .isInstanceOf(NoResultException.class);
+        assertThatThrownBy(() -> userRepository.findUserById(user3Id))
+                .isInstanceOf(NoResultException.class);
     }
 }

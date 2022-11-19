@@ -36,5 +36,5 @@ public interface UserRepository {
     /**
      * Метод удаляет всех пользователей
      */
-    boolean deleteAll();
+    void deleteAll();
 }

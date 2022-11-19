@@ -3,12 +3,11 @@ package ru.job4j.todo.repository;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Класс представляет собой реализацию доступа к хранилищу задач с помощью Hibernate
@@ -27,118 +26,44 @@ public class HibernateTaskRepository implements TaskRepository {
     private static final String SELECT_TASK_BY_ID = "FROM Task t WHERE t.id = :fId";
     private static final String DELETE_ALL_TASKS = "DELETE Task";
 
-    /** Взаимодействие с базой данных происходит за счет объекта SessionFactory */
-    private final SessionFactory sf;
+    private CrudRepository crudRepository;
 
     /** Объект для логирования событий */
     private static final Logger LOG = LogManager.getLogger(HibernateTaskRepository.class.getName());
 
     public Task add(Task task) {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.save(task);
-        session.getTransaction().commit();
-        session.close();
+        crudRepository.run(session -> session.save(task));
         return task;
     }
 
     public boolean complete(int id) {
-        int intResult = 0;
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            intResult = session.createQuery(COMPLETE_TASK)
-                    .setParameter("fDone", true)
-                    .setParameter("fId", id)
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            LOG.error("Exception", e);
-        }
-        session.close();
-        return intResult > 0;
+        return crudRepository.queryAndGetBoolean(COMPLETE_TASK, Map.of("fDone", true, "fId", id));
     }
 
     public boolean update(Task task) {
-        int intResult = 0;
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            intResult = session.createQuery(UPDATE_TASK)
-                    .setParameter("fTitle", task.getTitle())
-                    .setParameter("fDescription", task.getDescription())
-                    .setParameter("fId", task.getId())
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            LOG.error("Exception", e);
-        }
-        session.close();
-        return intResult > 0;
+        return crudRepository.queryAndGetBoolean(UPDATE_TASK, Map.of(
+                "fTitle", task.getTitle(),
+                "fDescription", task.getDescription(),
+                "fId", task.getId()));
     }
 
     public boolean delete(int id) {
-        int intResult = 0;
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            intResult = session.createQuery(DELETE_TASK)
-                    .setParameter("fId", id)
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            LOG.error("Exception", e);
-        }
-        session.close();
-        return intResult > 0;
+        return crudRepository.queryAndGetBoolean(DELETE_TASK, Map.of("fId", id));
     }
 
     public List<Task> findAll() {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List<Task> result = session.createQuery(SELECT_ALL_TASKS, Task.class).list();
-        session.getTransaction().commit();
-        session.close();
-        return result;
+        return crudRepository.queryAndGetList(SELECT_ALL_TASKS, Task.class);
     }
 
     public List<Task> findTasksByStatus(boolean done) {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List<Task> result = session.createQuery(SELECT_TASK_BY_STATUS, Task.class)
-                .setParameter("fDone", done).list();
-        session.getTransaction().commit();
-        session.close();
-        return result;
+        return crudRepository.queryAndGetList(SELECT_TASK_BY_STATUS, Task.class, Map.of("fDone", done));
     }
 
     public Task findById(int id) {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        Task result = session.createQuery(SELECT_TASK_BY_ID, Task.class)
-                .setParameter("fId", id)
-                .uniqueResult();
-        session.getTransaction().commit();
-        session.close();
-        return result;
+        return (Task) crudRepository.queryAndGetObject(SELECT_TASK_BY_ID, Task.class, Map.of("fId", id));
     }
 
     public boolean deleteAll() {
-        int intResult = 0;
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            intResult = session.createQuery(DELETE_ALL_TASKS).executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            LOG.error("Exception", e);
-        }
-        session.close();
-        return intResult > 0;
+        return crudRepository.queryAndGetBoolean(DELETE_ALL_TASKS);
     }
-
 }

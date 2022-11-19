@@ -1,11 +1,9 @@
 package ru.job4j.todo.repository;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import ru.job4j.todo.config.TestHibernateConfig;
 import ru.job4j.todo.model.Task;
 
 import java.util.List;
@@ -15,14 +13,11 @@ import static org.assertj.core.api.Assertions.*;
 
 class HibernateTaskRepositoryTest {
 
-    private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-            .configure().build();
+    private final SessionFactory sessionFactory = new TestHibernateConfig().getSessionFactory();
 
-    private final SessionFactory sessionFactory = new MetadataSources(registry)
-            .buildMetadata()
-            .buildSessionFactory();
+    private final CrudRepository crudRepository = new CrudRepositoryImpl(sessionFactory);
 
-    private final TaskRepository taskRepository = new HibernateTaskRepository(sessionFactory);
+    private final TaskRepository taskRepository = new HibernateTaskRepository(crudRepository);
 
     @AfterEach
     void cleanTable() {
