@@ -118,6 +118,8 @@ public class CrudRepositoryImpl implements CrudRepository {
             }
             LOG.error("Exception", exception);
             throw exception;
+        } finally {
+            session.close();
         }
     }
 }
