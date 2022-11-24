@@ -49,6 +49,7 @@
                 <th scope="col">Название</th>
                 <th scope="col">Дата создания</th>
                 <th scope="col">Статус</th>
+                <th scope="col">Пользователь</th>
             </tr>
             </thead>
             <tbody>
@@ -68,6 +69,7 @@
                         <i class="fa fa-square-o"></i>
                     </span>
                 </td>
+                <td th:text="${task.user.username}"></td>
             </tr>
             </tbody>
         </table>

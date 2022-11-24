@@ -37,4 +37,10 @@ public class Task {
     /** Флаг выполнения задачи */
     private boolean done = false;
 
+    /** Принадлежность задачи к пользователю */
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

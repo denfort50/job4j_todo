@@ -48,12 +48,8 @@ class HibernateUserRepositoryTest {
         int user2Id = userRepository.add(user2).orElseThrow().getId();
         int user3Id = userRepository.add(user3).orElseThrow().getId();
         userRepository.deleteAll();
-        assertThatThrownBy(() -> userRepository.findUserById(user1Id))
-                .isInstanceOf(NoResultException.class)
-                .hasMessage("No entity found for query");
-        assertThatThrownBy(() -> userRepository.findUserById(user2Id))
-                .isInstanceOf(NoResultException.class);
-        assertThatThrownBy(() -> userRepository.findUserById(user3Id))
-                .isInstanceOf(NoResultException.class);
+        assertThat(userRepository.findUserById(user1Id)).isEmpty();
+        assertThat(userRepository.findUserById(user2Id)).isEmpty();
+        assertThat(userRepository.findUserById(user3Id)).isEmpty();
     }
 }
