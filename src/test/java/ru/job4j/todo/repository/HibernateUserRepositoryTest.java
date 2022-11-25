@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import ru.job4j.todo.config.TestHibernateConfig;
 import ru.job4j.todo.model.User;
 
-import javax.persistence.NoResultException;
-
 import static org.assertj.core.api.Assertions.*;
 
 class HibernateUserRepositoryTest {
