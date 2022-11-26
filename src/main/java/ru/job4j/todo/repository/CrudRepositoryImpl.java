@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -112,20 +111,13 @@ public class CrudRepositoryImpl implements CrudRepository {
             T rsl = command.apply(session);
             transaction.commit();
             return rsl;
-        } catch (NoResultException nre) {
-            var transaction = session.getTransaction();
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            LOG.error("NoResultException", nre);
-            return (T) Optional.empty();
         } catch (Exception exception) {
             var transaction = session.getTransaction();
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             LOG.error("Exception", exception);
-            throw exception;
+            return (T) Optional.empty();
         } finally {
             session.close();
         }

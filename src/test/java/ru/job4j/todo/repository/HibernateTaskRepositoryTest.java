@@ -3,17 +3,17 @@ package ru.job4j.todo.repository;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import ru.job4j.todo.config.TestHibernateConfig;
 import ru.job4j.todo.model.Task;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
+import static ru.job4j.todo.util.SessionFactoryLoader.getSessionFactory;
 
 class HibernateTaskRepositoryTest {
 
-    private final SessionFactory sessionFactory = new TestHibernateConfig().getSessionFactory();
+    private final SessionFactory sessionFactory = getSessionFactory();
 
     private final CrudRepository crudRepository = new CrudRepositoryImpl(sessionFactory);
 
