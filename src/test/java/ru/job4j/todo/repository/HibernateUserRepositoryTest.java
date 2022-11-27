@@ -2,6 +2,7 @@ package ru.job4j.todo.repository;
 
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.job4j.todo.model.User;
 
@@ -15,6 +16,13 @@ class HibernateUserRepositoryTest {
     private final CrudRepository crudRepository = new CrudRepositoryImpl(sessionFactory);
 
     private final UserRepository userRepository = new HibernateUserRepository(crudRepository);
+
+    private final TaskRepository taskRepository = new HibernateTaskRepository(crudRepository);
+
+    @BeforeEach
+    void cleanTasksTable() {
+        taskRepository.deleteAll();
+    }
 
     @AfterEach
     void cleanTable() {
