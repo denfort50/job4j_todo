@@ -23,7 +23,7 @@ class HibernateUserRepositoryTest {
 
     @Test
     void whenAddThenSuccess() {
-        User user = new User("Denis", "mr_bond", "password");
+        User user = new User("Denis", "denfort", "password1");
         user = userRepository.add(user).orElseThrow();
         User userInDB = userRepository.findUserById(user.getId()).orElseThrow();
         assertThat(userInDB.getUsername()).isEqualTo(user.getUsername());
@@ -31,7 +31,7 @@ class HibernateUserRepositoryTest {
 
     @Test
     void whenFindUserByLoginAndPasswordThenSuccess() {
-        User user = new User("Denis", "mr_bond", "password");
+        User user = new User("Andrey", "jacovich", "password2");
         user = userRepository.add(user).orElseThrow();
         User userInDB = userRepository.findUserByLoginAndPassword(user.getLogin(), user.getPassword()).orElseThrow();
         assertThat(userInDB.getUsername()).isEqualTo(user.getUsername());
@@ -39,9 +39,9 @@ class HibernateUserRepositoryTest {
 
     @Test
     void whenDeleteAllThenSuccess() {
-        User user1 = new User("Denis", "mr_bond", "password");
-        User user2 = new User("Alex", "mr_crust", "password");
-        User user3 = new User("John", "mr_wick", "password");
+        User user1 = new User("Alex", "cryptoman", "password3");
+        User user2 = new User("Jason", "professional", "password4");
+        User user3 = new User("Arnold", "terminator", "password5");
         int user1Id = userRepository.add(user1).orElseThrow().getId();
         int user2Id = userRepository.add(user2).orElseThrow().getId();
         int user3Id = userRepository.add(user3).orElseThrow().getId();
