@@ -50,6 +50,7 @@
                 <th scope="col">Дата создания</th>
                 <th scope="col">Статус</th>
                 <th scope="col">Пользователь</th>
+                <th scope="col">Приоритет</th>
             </tr>
             </thead>
             <tbody>
@@ -70,6 +71,7 @@
                     </span>
                 </td>
                 <td th:text="${task.user.username}"></td>
+                <td th:text="${task.priority.name}"></td>
             </tr>
             </tbody>
         </table>

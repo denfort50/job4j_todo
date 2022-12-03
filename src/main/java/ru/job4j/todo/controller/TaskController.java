@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
 
 import static ru.job4j.todo.util.UserAttributeTool.addAttributeUser;
+import static ru.job4j.todo.util.UserAttributeTool.getAttributeUser;
 
 /**
  * Класс представляет собой контроллер для взаимодействия хранилища задач с представлениями
@@ -23,6 +26,7 @@ public class TaskController {
 
     /** Взаимодействие с базой данных происходит через слой сервисов TaskService */
     private final TaskService taskService;
+    private final PriorityService priorityService;
 
     /**
      * Метод обрабатывает GET-запрос на получение списка всех задач
@@ -68,7 +72,8 @@ public class TaskController {
      */
     @GetMapping("/formAddTask")
     public String addTask(Model model) {
-        model.addAttribute("task", new Task(0, "Название", "Описание"));
+        model.addAttribute("task", new Task(0, "Название", "Описание", new Priority()));
+        model.addAttribute("priorities", priorityService.findAll());
         return "addTask";
     }
 
@@ -78,7 +83,9 @@ public class TaskController {
      * @return возвращает представление со списком всех задач
      */
     @PostMapping("/createTask")
-    public String createTask(@ModelAttribute Task task) {
+    public String createTask(@ModelAttribute Task task, HttpSession session) {
+        task.setPriority(priorityService.findById(task.getPriority().getId()));
+        task.setUser(getAttributeUser(session));
         taskService.add(task);
         return "redirect:/tasks";
     }
@@ -119,6 +126,7 @@ public class TaskController {
     @GetMapping("/formModifyTask/{id}")
     public String modifyTask(Model model, @PathVariable("id") int id) {
         model.addAttribute("task", taskService.findById(id));
+        model.addAttribute("priorities", priorityService.findAll());
         return "modifyTask";
     }
 
@@ -129,6 +137,7 @@ public class TaskController {
      */
     @PostMapping("/updateTask")
     public String updateTask(@ModelAttribute Task task) {
+        task.setPriority(priorityService.findById(task.getPriority().getId()));
         boolean result = taskService.update(task);
         if (!result) {
             return "redirect:/tasks/fail";
