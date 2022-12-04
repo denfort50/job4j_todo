@@ -3,9 +3,12 @@ package ru.job4j.todo.repository;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +74,10 @@ class HibernateTaskRepositoryTest {
         taskRepository.deleteAll();
         Task task1 = new Task(1, "Задача 1", "Описание 1", new Priority(1, "Критический", 1));
         Task task2 = new Task(2, "Задача 2", "Описание 2", new Priority(1, "Критический", 1));
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(1, "Общие"));
+        task1.setCategories(categories);
+        task2.setCategories(categories);
         taskRepository.add(task1);
         taskRepository.add(task2);
         List<Task> tasksInDB = taskRepository.findAll();
@@ -83,6 +90,11 @@ class HibernateTaskRepositoryTest {
         Task task1 = new Task(1, "Задача 1", "Описание 1", new Priority(1, "Критический", 1));
         Task task2 = new Task(2, "Задача 2", "Описание 2", new Priority(1, "Критический", 1));
         Task task3 = new Task(3, "Задача 3", "Описание 3", new Priority(1, "Критический", 1));
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(1, "Общие"));
+        task1.setCategories(categories);
+        task2.setCategories(categories);
+        task3.setCategories(categories);
         taskRepository.add(task1);
         taskRepository.add(task2);
         taskRepository.add(task3);
@@ -97,6 +109,11 @@ class HibernateTaskRepositoryTest {
         Task task1 = new Task(1, "Задача 1", "Описание 1", new Priority(1, "Критический", 1));
         Task task2 = new Task(2, "Задача 2", "Описание 2", new Priority(1, "Критический", 1));
         Task task3 = new Task(3, "Задача 3", "Описание 3", new Priority(1, "Критический", 1));
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(1, "Общие"));
+        task1.setCategories(categories);
+        task2.setCategories(categories);
+        task3.setCategories(categories);
         taskRepository.add(task1);
         taskRepository.add(task2);
         taskRepository.add(task3);
@@ -112,6 +129,11 @@ class HibernateTaskRepositoryTest {
         Task task1 = new Task(1, "Задача 1", "Описание 1", new Priority(1, "Критический", 1));
         Task task2 = new Task(2, "Задача 2", "Описание 2", new Priority(1, "Критический", 1));
         Task task3 = new Task(3, "Задача 3", "Описание 3", new Priority(1, "Критический", 1));
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(1, "Общие"));
+        task1.setCategories(categories);
+        task2.setCategories(categories);
+        task3.setCategories(categories);
         taskRepository.add(task1);
         taskRepository.add(task2);
         taskRepository.add(task3);

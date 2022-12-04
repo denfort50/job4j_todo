@@ -6,10 +6,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.job4j.todo.util.UserAttributeTool.addAttributeUser;
 import static ru.job4j.todo.util.UserAttributeTool.getAttributeUser;
@@ -24,9 +30,9 @@ import static ru.job4j.todo.util.UserAttributeTool.getAttributeUser;
 @RequestMapping("/tasks")
 public class TaskController {
 
-    /** Взаимодействие с базой данных происходит через слой сервисов TaskService */
     private final TaskService taskService;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     /**
      * Метод обрабатывает GET-запрос на получение списка всех задач
@@ -74,6 +80,7 @@ public class TaskController {
     public String addTask(Model model) {
         model.addAttribute("task", new Task(0, "Название", "Описание", new Priority()));
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "addTask";
     }
 
@@ -83,9 +90,13 @@ public class TaskController {
      * @return возвращает представление со списком всех задач
      */
     @PostMapping("/createTask")
-    public String createTask(@ModelAttribute Task task, HttpSession session) {
+    public String createTask(@ModelAttribute Task task, HttpSession session, HttpServletRequest httpServletRequest) {
         task.setPriority(priorityService.findById(task.getPriority().getId()));
         task.setUser(getAttributeUser(session));
+        List<String> categories = Arrays.stream(httpServletRequest.getParameterValues("category.id")).toList();
+        task.setCategories(categories.stream()
+                .map(category -> categoryService.findById(Integer.parseInt(category)))
+                .collect(Collectors.toList()));
         taskService.add(task);
         return "redirect:/tasks";
     }

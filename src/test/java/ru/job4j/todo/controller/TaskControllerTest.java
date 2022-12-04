@@ -2,14 +2,14 @@ package ru.job4j.todo.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.PriorityService;
-import ru.job4j.todo.service.PriorityServiceImpl;
-import ru.job4j.todo.service.TaskServiceImpl;
-import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.service.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -26,8 +26,9 @@ class TaskControllerTest {
         HttpSession session = mock(HttpSession.class);
         TaskService taskService = mock(TaskServiceImpl.class);
         PriorityService priorityService = mock(PriorityServiceImpl.class);
+        CategoryService categoryService = mock(CategoryService.class);
         when(taskService.findAll()).thenReturn(tasks);
-        TaskController taskController = new TaskController(taskService, priorityService);
+        TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         String page = taskController.getAllTasks(model, session);
         verify(model).addAttribute("allTasks", tasks);
         assertThat(page).isEqualTo("allTasks");
@@ -44,8 +45,9 @@ class TaskControllerTest {
         HttpSession session = mock(HttpSession.class);
         TaskService taskService = mock(TaskServiceImpl.class);
         PriorityService priorityService = mock(PriorityServiceImpl.class);
+        CategoryService categoryService = mock(CategoryService.class);
         when(taskService.findTasksByStatus(false)).thenReturn(newTasks);
-        TaskController taskController = new TaskController(taskService, priorityService);
+        TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         String page = taskController.getNewTasks(model, session);
         verify(model).addAttribute("newTasks", newTasks);
         assertThat(page).isEqualTo("newTasks");
@@ -64,8 +66,9 @@ class TaskControllerTest {
         HttpSession session = mock(HttpSession.class);
         TaskService taskService = mock(TaskServiceImpl.class);
         PriorityService priorityService = mock(PriorityServiceImpl.class);
+        CategoryService categoryService = mock(CategoryService.class);
         when(taskService.findTasksByStatus(true)).thenReturn(completedTasks);
-        TaskController taskController = new TaskController(taskService, priorityService);
+        TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         String page = taskController.getCompletedTasks(model, session);
         verify(model).addAttribute("completedTasks", completedTasks);
         assertThat(page).isEqualTo("completedTasks");
@@ -77,7 +80,8 @@ class TaskControllerTest {
         Model model = mock(Model.class);
         TaskService taskService = mock(TaskServiceImpl.class);
         PriorityService priorityService = mock(PriorityServiceImpl.class);
-        TaskController taskController = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         taskService.add(task1);
         String page = taskController.addTask(model);
         verify(taskService).add(task1);
@@ -87,12 +91,17 @@ class TaskControllerTest {
     @Test
     void whenCreateTaskThenSuccess() {
         Task task1 = new Task(1, "Задача 1", "Описание 1", new Priority(1, "Критический", 1));
+        Category category = new Category(1, "Общее");
         TaskService taskService = mock(TaskServiceImpl.class);
         PriorityService priorityService = mock(PriorityServiceImpl.class);
-        TaskController taskController = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         HttpSession session = mock(HttpSession.class);
+        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(priorityService.findById(task1.getPriority().getId())).thenReturn(task1.getPriority());
-        String page = taskController.createTask(task1, session);
+        when(httpServletRequest.getParameterValues("category.id")).thenReturn(new String[] {String.valueOf(category.getId())});
+        when(categoryService.findById(category.getId())).thenReturn(category);
+        String page = taskController.createTask(task1, session, httpServletRequest);
         verify(taskService).add(task1);
         assertThat(page).isEqualTo("redirect:/tasks");
     }

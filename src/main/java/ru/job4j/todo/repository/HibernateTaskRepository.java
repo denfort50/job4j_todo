@@ -19,8 +19,8 @@ public class HibernateTaskRepository implements TaskRepository {
     private static final String COMPLETE_TASK = "UPDATE Task t SET t.done = :fDone WHERE t.id = :fId";
     private static final String UPDATE_TASK = "UPDATE Task t SET t.title = :fTitle, t.description = :fDescription, t.priority = :fPriority WHERE t.id = :fId";
     private static final String DELETE_TASK = "DELETE Task t WHERE t.id = :fId";
-    private static final String SELECT_ALL_TASKS = "FROM Task t JOIN FETCH t.priority ORDER BY t.id";
-    private static final String SELECT_TASK_BY_STATUS = "FROM Task t JOIN FETCH t.priority WHERE t.done = :fDone ORDER BY t.id";
+    private static final String SELECT_ALL_TASKS = "FROM Task t JOIN FETCH t.priority JOIN FETCH t.categories ORDER BY t.id";
+    private static final String SELECT_TASK_BY_STATUS = "FROM Task t JOIN FETCH t.priority JOIN FETCH t.categories WHERE t.done = :fDone ORDER BY t.id";
     private static final String SELECT_TASK_BY_ID = "FROM Task t JOIN FETCH t.priority WHERE t.id = :fId";
     private static final String DELETE_ALL_TASKS = "DELETE Task";
 
