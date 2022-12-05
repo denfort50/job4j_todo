@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.CategoryService;
@@ -93,12 +94,14 @@ public class TaskController {
     public String createTask(@ModelAttribute Task task, HttpSession session, HttpServletRequest httpServletRequest) {
         task.setPriority(priorityService.findById(task.getPriority().getId()));
         task.setUser(getAttributeUser(session));
-        List<String> categories = Arrays.stream(httpServletRequest.getParameterValues("category.id")).toList();
-        task.setCategories(categories.stream()
-                .map(category -> categoryService.findById(Integer.parseInt(category)))
-                .collect(Collectors.toList()));
-        taskService.add(task);
-        return "redirect:/tasks";
+        List<Category> categories = categoryService.getCategories(httpServletRequest);
+        if (!categories.isEmpty()) {
+            task.setCategories(categories);
+            taskService.add(task);
+            return "redirect:/tasks";
+        } else {
+            return "redirect:/404";
+        }
     }
 
     /**

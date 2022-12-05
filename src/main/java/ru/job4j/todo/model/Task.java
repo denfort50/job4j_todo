@@ -18,6 +18,7 @@ import java.util.Set;
 @Table(name = "tasks")
 @NoArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
 public class Task {
 
@@ -25,17 +26,21 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonNull
+    @EqualsAndHashCode.Include
     private int id;
 
     /** Название задачи */
     @NonNull
+    @EqualsAndHashCode.Include
     private String title;
 
     /** Описание задачи */
     @NonNull
+    @EqualsAndHashCode.Include
     private String description;
 
     /** Дата создания задачи */
+    @EqualsAndHashCode.Include
     private LocalDateTime created = LocalDateTime.now();
 
     /** Флаг выполнения задачи */
@@ -45,12 +50,14 @@ public class Task {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+    @EqualsAndHashCode.Include
     private User user;
 
     /** Приоритет задачи */
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "priority_id")
+    @EqualsAndHashCode.Include
     private Priority priority;
 
     /** Категории задачи */

@@ -51,7 +51,7 @@
                 <th scope="col">Статус</th>
                 <th scope="col">Пользователь</th>
                 <th scope="col">Приоритет</th>
-                <th scope="col">Категория</th>
+                <th scope="col">Категории</th>
             </tr>
             </thead>
             <tbody>
@@ -73,7 +73,11 @@
                 </td>
                 <td th:text="${task.user.username}"></td>
                 <td th:text="${task.priority.name}"></td>
-                <td th:text="${task.categories}"></td>
+                <td>
+                    <span th:each="category: ${task.categories}">
+                    <a th:text="${category.name}" style="text-decoration: solid"></a>
+                    </span>
+                </td>
             </tr>
             </tbody>
         </table>

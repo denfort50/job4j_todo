@@ -91,7 +91,7 @@ class TaskControllerTest {
     @Test
     void whenCreateTaskThenSuccess() {
         Task task1 = new Task(1, "Задача 1", "Описание 1", new Priority(1, "Критический", 1));
-        Category category = new Category(1, "Общее");
+        List<Category> categories = List.of(new Category(1, "Общее"));
         TaskService taskService = mock(TaskServiceImpl.class);
         PriorityService priorityService = mock(PriorityServiceImpl.class);
         CategoryService categoryService = mock(CategoryService.class);
@@ -99,11 +99,26 @@ class TaskControllerTest {
         HttpSession session = mock(HttpSession.class);
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         when(priorityService.findById(task1.getPriority().getId())).thenReturn(task1.getPriority());
-        when(httpServletRequest.getParameterValues("category.id")).thenReturn(new String[] {String.valueOf(category.getId())});
-        when(categoryService.findById(category.getId())).thenReturn(category);
+        when(categoryService.getCategories(httpServletRequest)).thenReturn(categories);
         String page = taskController.createTask(task1, session, httpServletRequest);
         verify(taskService).add(task1);
         assertThat(page).isEqualTo("redirect:/tasks");
+    }
+
+    @Test
+    void whenCreateTaskThenFail() {
+        Task task1 = new Task(1, "Задача 1", "Описание 1", new Priority(1, "Критический", 1));
+        List<Category> categories = new ArrayList<>();
+        TaskService taskService = mock(TaskServiceImpl.class);
+        PriorityService priorityService = mock(PriorityServiceImpl.class);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController taskController = new TaskController(taskService, priorityService, categoryService);
+        HttpSession session = mock(HttpSession.class);
+        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+        when(priorityService.findById(task1.getPriority().getId())).thenReturn(task1.getPriority());
+        when(categoryService.getCategories(httpServletRequest)).thenReturn(categories);
+        String page = taskController.createTask(task1, session, httpServletRequest);
+        assertThat(page).isEqualTo("redirect:/404");
     }
 
 }
