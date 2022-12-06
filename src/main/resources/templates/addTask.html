@@ -27,22 +27,22 @@
             <div class="card-body">
                 <form th:action="@{/tasks/createTask}" method="POST">
                     <input type="hidden" name="id" value="0"/>
-                    <div class="form-group">
+                    <div class="form-group" >
                         <label for="title">Название</label>
-                        <input type="text" class="form-control" name="title" id="title">
+                        <input type="text" class="form-control" name="title" id="title" required>
                         <label for="description">Описание</label>
-                        <input type="text" class="form-control" name="description" id="description">
+                        <input type="text" class="form-control" name="description" id="description" required>
                     </div>
                     <div class="form-group">
                         <label for="priority.id">Приоритет</label>
-                        <select class="form-control" id="priority.id" name="priority.id">
+                        <select class="form-control" id="priority.id" name="priority.id" required>
                             <option th:each="priority : ${priorities}" th:value="${priority.id}" th:text="${priority.name}"></option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Создать</button>
                     <div class="form-group">
                         <label for="category.id">Категория</label>
-                        <select class="form-control" id="category.id" name="category.id" multiple="multiple" size="4">
+                        <select class="form-control" id="category.id" name="category.id" multiple="multiple" size="4" required>
                             <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
                         </select>
                     </div>

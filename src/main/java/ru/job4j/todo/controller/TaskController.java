@@ -95,13 +95,9 @@ public class TaskController {
         task.setPriority(priorityService.findById(task.getPriority().getId()));
         task.setUser(getAttributeUser(session));
         List<Category> categories = categoryService.getCategories(httpServletRequest);
-        if (!categories.isEmpty()) {
-            task.setCategories(categories);
-            taskService.add(task);
-            return "redirect:/tasks";
-        } else {
-            return "redirect:/404";
-        }
+        task.setCategories(categories);
+        taskService.add(task);
+        return "redirect:/tasks";
     }
 
     /**

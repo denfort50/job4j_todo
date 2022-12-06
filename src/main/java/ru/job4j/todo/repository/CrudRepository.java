@@ -18,6 +18,8 @@ public interface CrudRepository {
 
     <T> List<T> queryAndGetList(String query, Class<T> tClass, Map<String, Object> args);
 
+    <T> List<T> queryAndGetList(String query, Class<T> tClass, String parameter, List<Integer> ids);
+
     <T> Optional<T> queryAndGetOptional(String query, Class<T> tClass, Map<String, Object> args);
 
     <T> boolean queryAndGetBoolean(String query);
@@ -27,4 +29,5 @@ public interface CrudRepository {
     <T> Object queryAndGetObject(String query, Class<T> tClass, Map<String, Object> args);
 
     <T> T executeTransaction(Function<Session, T> command);
+
 }

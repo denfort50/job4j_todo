@@ -8,6 +8,7 @@ import ru.job4j.todo.repository.CategoryRepository;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,8 +28,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getCategories(HttpServletRequest httpServletRequest) {
-        List<String> categoriesNumbers = Arrays.stream(httpServletRequest.getParameterValues("category.id")).toList();
-        return categoriesNumbers.stream()
-                .map(category -> categoryRepository.findById(Integer.parseInt(category))).toList();
+        String[] categories = httpServletRequest.getParameterValues("category.id");
+        List<Integer> categoriesNumbers = Arrays.stream(categories).map(Integer::parseInt).collect(Collectors.toList());
+        return categoryRepository.findCategoriesByIds(categoriesNumbers);
     }
 }

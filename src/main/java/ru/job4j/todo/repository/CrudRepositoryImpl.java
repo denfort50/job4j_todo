@@ -55,6 +55,16 @@ public class CrudRepositoryImpl implements CrudRepository {
         return executeTransaction(command);
     }
 
+    public <T> List<T> queryAndGetList(String query, Class<T> tClass, String parameter, List<Integer> ids) {
+        Function<Session, List<T>> command = session -> {
+            var sq = session
+                    .createQuery(query, tClass);
+            sq.setParameterList(parameter, ids);
+            return sq.list();
+        };
+        return executeTransaction(command);
+    }
+
     public <T> Optional<T> queryAndGetOptional(String query, Class<T> tClass, Map<String, Object> args) {
         Function<Session, Optional<T>> command = session -> {
             var sq = session

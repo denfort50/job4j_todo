@@ -1,7 +1,6 @@
 package ru.job4j.todo.service;
 
 import ru.job4j.todo.model.Category;
-import ru.job4j.todo.model.Task;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

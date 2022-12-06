@@ -9,4 +9,6 @@ public interface CategoryRepository {
     List<Category> findAll();
 
     Category findById(int id);
+
+    List<Category> findCategoriesByIds(List<Integer> ids);
 }
