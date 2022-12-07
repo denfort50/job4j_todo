@@ -5,12 +5,15 @@ import org.springframework.ui.Model;
 import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.*;
+import ru.job4j.todo.util.UserAttributeTool;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,6 +31,8 @@ class TaskControllerTest {
         PriorityService priorityService = mock(PriorityServiceImpl.class);
         CategoryService categoryService = mock(CategoryService.class);
         when(taskService.findAll()).thenReturn(tasks);
+        User user = new User(1, "Denis", "mr_bond", "password", TimeZone.getDefault());
+        when(UserAttributeTool.getAttributeUser(session)).thenReturn(user);
         TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         String page = taskController.getAllTasks(model, session);
         verify(model).addAttribute("allTasks", tasks);
@@ -47,6 +52,8 @@ class TaskControllerTest {
         PriorityService priorityService = mock(PriorityServiceImpl.class);
         CategoryService categoryService = mock(CategoryService.class);
         when(taskService.findTasksByStatus(false)).thenReturn(newTasks);
+        User user = new User(1, "Denis", "mr_bond", "password", TimeZone.getDefault());
+        when(UserAttributeTool.getAttributeUser(session)).thenReturn(user);
         TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         String page = taskController.getNewTasks(model, session);
         verify(model).addAttribute("newTasks", newTasks);
@@ -68,6 +75,8 @@ class TaskControllerTest {
         PriorityService priorityService = mock(PriorityServiceImpl.class);
         CategoryService categoryService = mock(CategoryService.class);
         when(taskService.findTasksByStatus(true)).thenReturn(completedTasks);
+        User user = new User(1, "Denis", "mr_bond", "password", TimeZone.getDefault());
+        when(UserAttributeTool.getAttributeUser(session)).thenReturn(user);
         TaskController taskController = new TaskController(taskService, priorityService, categoryService);
         String page = taskController.getCompletedTasks(model, session);
         verify(model).addAttribute("completedTasks", completedTasks);

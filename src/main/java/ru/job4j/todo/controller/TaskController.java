@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
@@ -14,8 +15,12 @@ import ru.job4j.todo.service.TaskService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import java.util.Arrays;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import static ru.job4j.todo.util.UserAttributeTool.addAttributeUser;
@@ -42,7 +47,8 @@ public class TaskController {
      */
     @GetMapping("")
     public String getAllTasks(Model model, HttpSession session) {
-        model.addAttribute("allTasks", taskService.findAll());
+        List<Task> taskList = choseWayOfShowingDateOfCreated(taskService.findAll(), session);
+        model.addAttribute("allTasks", taskList);
         model.addAttribute("tasksAreAbsent", taskService.findAll().isEmpty());
         addAttributeUser(model, session);
         return "allTasks";
@@ -55,7 +61,8 @@ public class TaskController {
      */
     @GetMapping("/undone")
     public String getNewTasks(Model model, HttpSession session) {
-        model.addAttribute("newTasks", taskService.findTasksByStatus(false));
+        List<Task> taskList = choseWayOfShowingDateOfCreated(taskService.findTasksByStatus(false), session);
+        model.addAttribute("newTasks", taskList);
         addAttributeUser(model, session);
         return "newTasks";
     }
@@ -67,7 +74,8 @@ public class TaskController {
      */
     @GetMapping("/done")
     public String getCompletedTasks(Model model, HttpSession session) {
-        model.addAttribute("completedTasks", taskService.findTasksByStatus(true));
+        List<Task> taskList = choseWayOfShowingDateOfCreated(taskService.findTasksByStatus(true), session);
+        model.addAttribute("completedTasks", taskList);
         addAttributeUser(model, session);
         return "completedTasks";
     }
@@ -189,4 +197,19 @@ public class TaskController {
         return "fail";
     }
 
+    private List<Task> choseWayOfShowingDateOfCreated(List<Task> tasks, HttpSession session) {
+        User user = getAttributeUser(session);
+        Optional<TimeZone> timeZone = Optional.ofNullable(user.getTimezone());
+        ZoneId zoneId;
+        if (timeZone.isPresent()) {
+            zoneId = timeZone.get().toZoneId();
+        } else {
+            zoneId = TimeZone.getDefault().toZoneId();
+        }
+        return tasks.stream().peek(task -> {
+            LocalDateTime before = task.getCreated();
+            LocalDateTime after = LocalDateTime.from(before.atZone(zoneId));
+            task.setCreated(after);
+        }).collect(Collectors.toList());
+    }
 }

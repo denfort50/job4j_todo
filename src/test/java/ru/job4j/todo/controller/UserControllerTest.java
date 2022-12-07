@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,7 +29,7 @@ class UserControllerTest {
 
     @Test
     void whenLoginThenFail() {
-        User user = new User(1, "Denis", "mr_bond", "password");
+        User user = new User(1, "Denis", "mr_bond", "password", TimeZone.getDefault());
         HttpSession session = mock(HttpSession.class);
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         UserService userService = mock(UserService.class);
@@ -41,7 +42,7 @@ class UserControllerTest {
 
     @Test
     void whenLoginThenSuccess() {
-        User user = new User(1, "Denis", "mr_bond", "password");
+        User user = new User(1, "Denis", "mr_bond", "password", TimeZone.getDefault());
         HttpSession session = mock(HttpSession.class);
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         UserService userService = mock(UserService.class);
@@ -63,7 +64,7 @@ class UserControllerTest {
 
     @Test
     void whenAddUserThenSuccess() {
-        User user = new User(0, "username", "login", "password");
+        User user = new User(0, "username", "login", "password", TimeZone.getDefault());
         Model model = mock(Model.class);
         HttpSession session = mock(HttpSession.class);
         UserService userService = mock(UserService.class);
@@ -75,21 +76,21 @@ class UserControllerTest {
 
     @Test
     void whenRegistrationThenFail() {
-        User user = new User(1, "Denis", "mr_bond", "password");
+        User user = new User(1, "Denis", "mr_bond", "password", TimeZone.getDefault());
         UserService userService = mock(UserService.class);
         when(userService.add(user)).thenReturn(Optional.empty());
         UserController userController = new UserController(userService);
-        String page = userController.registration(user);
+        String page = userController.registration(user, user.getTimezone().getID());
         assertThat(page).isEqualTo("redirect:/users/fail");
     }
 
     @Test
     void whenRegistrationThenSuccess() {
-        User user = new User(1, "Denis", "mr_bond", "password");
+        User user = new User(1, "Denis", "mr_bond", "password", TimeZone.getDefault());
         UserService userService = mock(UserService.class);
         when(userService.add(user)).thenReturn(Optional.of(user));
         UserController userController = new UserController(userService);
-        String page = userController.registration(user);
+        String page = userController.registration(user, user.getTimezone().getID());
         assertThat(page).isEqualTo("redirect:/users/success");
     }
 

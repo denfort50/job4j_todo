@@ -9,7 +9,9 @@ import ru.job4j.todo.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.ZoneId;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static ru.job4j.todo.util.UserAttributeTool.addAttributeUser;
 
@@ -52,13 +54,15 @@ public class UserController {
 
     @GetMapping("/add")
     public String addUser(Model model, HttpSession session) {
-        model.addAttribute("newUser", new User(0, "username", "login", "password"));
+        model.addAttribute("newUser", new User(0, "username", "login", "password", TimeZone.getDefault()));
+        model.addAttribute("timeZones", TimeZone.getAvailableIDs());
         addAttributeUser(model, session);
         return "addUser";
     }
 
     @PostMapping("/registration")
-    public String registration(@ModelAttribute User user) {
+    public String registration(@ModelAttribute User user, @RequestParam("timeZoneId") String timeZoneId) {
+        user.setTimezone(TimeZone.getTimeZone(ZoneId.of(timeZoneId)));
         Optional<User> regUser = userService.add(user);
         if (regUser.isEmpty()) {
             return "redirect:/users/fail";

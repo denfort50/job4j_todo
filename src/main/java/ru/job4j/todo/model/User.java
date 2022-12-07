@@ -3,6 +3,7 @@ package ru.job4j.todo.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.TimeZone;
 
 /**
  * Класс описывает модель данных User – пользователь
@@ -29,4 +30,7 @@ public class User {
 
     @NonNull
     private String password;
+
+    @Column(name = "user_zone")
+    private TimeZone timezone;
 }

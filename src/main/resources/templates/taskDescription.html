@@ -50,7 +50,7 @@
                 <div>ID: <span th:text="${task.id}"></span></div>
                 <div>Название: <span th:text="${task.title}"></span></div>
                 <div>Описание: <span th:text="${task.description}"></span></div>
-                <div>Дата создания: <span th:text="${task.created}"></span></div>
+                <div>Дата создания: <span th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></span></div>
                 <div>Статус:
                     <span th:if="${task.done}">
                         <i class="fa fa-check-square-o"></i>

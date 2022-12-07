@@ -1,0 +1,2 @@
+INSERT INTO tasks (title, description, created, done, user_id, priority_id) VALUES ('Найти самолет' , 'Достать из самолета ценные вещи', '2022-12-07 16:00:00', false, 4, 1);
+INSERT INTO tasks (title, description, created, done, user_id, priority_id) VALUES ('Сходить в ресторан' , 'Сходить в ресторан и заказать сибаса', '2022-12-07 17:00:00', false, 5, 1);
