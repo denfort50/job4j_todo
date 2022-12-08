@@ -3,11 +3,9 @@ package ru.job4j.todo.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Класс описывает модель данных Task – задача
@@ -41,7 +39,7 @@ public class Task {
 
     /** Дата создания задачи */
     @EqualsAndHashCode.Include
-    private LocalDateTime created = LocalDateTime.now();
+    private ZonedDateTime created = ZonedDateTime.now();
 
     /** Флаг выполнения задачи */
     private boolean done = false;
