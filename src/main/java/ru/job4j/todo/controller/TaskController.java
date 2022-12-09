@@ -15,6 +15,7 @@ import ru.job4j.todo.service.TaskService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -206,8 +207,9 @@ public class TaskController {
             zoneId = TimeZone.getDefault().toZoneId();
         }
         return tasks.stream().peek(task -> {
-            ZonedDateTime before = task.getCreated();
-            ZonedDateTime after = before.withZoneSameInstant(zoneId);
+            LocalDateTime before = task.getCreated();
+            LocalDateTime after = before.atZone(TimeZone.getDefault().toZoneId())
+                    .withZoneSameInstant(zoneId).toLocalDateTime();
             task.setCreated(after);
         }).collect(Collectors.toList());
     }

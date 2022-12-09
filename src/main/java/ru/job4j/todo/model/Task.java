@@ -3,6 +3,7 @@ package ru.job4j.todo.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class Task {
 
     /** Дата создания задачи */
     @EqualsAndHashCode.Include
-    private ZonedDateTime created = ZonedDateTime.now();
+    private LocalDateTime created = LocalDateTime.now();
 
     /** Флаг выполнения задачи */
     private boolean done = false;
